@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 const AddItemForm = ({ setDatabase }) => {
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState("");
   const [stocked, setStocked] = useState(false);
 
   const handleSubmit = () => {
@@ -12,7 +12,13 @@ const AddItemForm = ({ setDatabase }) => {
       alert("Fill in the name and category!");
       return;
     }
-    const newItem = { category, name, price, stocked, id: uuidv4() };
+    const newItem = {
+      category,
+      name,
+      price: price || 0,
+      stocked,
+      id: uuidv4(),
+    };
     setDatabase((prev) => {
       const data = [...prev, newItem];
       localStorage.setItem("database", JSON.stringify(data));
@@ -20,8 +26,16 @@ const AddItemForm = ({ setDatabase }) => {
     });
     setCategory("");
     setName("");
-    setPrice(0);
+    setPrice("");
     setStocked(false);
+  };
+
+  const sharedInputStyle = {
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "8px",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
   };
 
   return (
@@ -39,7 +53,7 @@ const AddItemForm = ({ setDatabase }) => {
       <select
         onChange={(e) => setCategory(e.target.value)}
         value={category}
-        style={{ width: "100%" }}
+        style={sharedInputStyle}
       >
         <option value="">Select Category</option>
         <option value="Fruits">Fruits</option>
@@ -51,7 +65,7 @@ const AddItemForm = ({ setDatabase }) => {
         type="text"
         onChange={(e) => setName(e.target.value)}
         value={name}
-        style={{ width: "90%" }}
+        style={sharedInputStyle}
       />
 
       <p>Price</p>
@@ -59,7 +73,7 @@ const AddItemForm = ({ setDatabase }) => {
         type="number"
         value={price}
         onChange={(e) => setPrice(e.target.value)}
-        style={{ width: "90%" }}
+        style={sharedInputStyle}
       />
 
       <div style={{ marginTop: "15px" }}>
@@ -74,14 +88,13 @@ const AddItemForm = ({ setDatabase }) => {
       <button
         onClick={handleSubmit}
         style={{
+          ...sharedInputStyle,
           marginTop: "20px",
-          width: "100%",
-          padding: "10px",
           backgroundColor: "#a8e6cf",
           border: "none",
-          borderRadius: "5px",
           cursor: "pointer",
           fontWeight: "bold",
+          padding: "10px",
         }}
       >
         Add to List
