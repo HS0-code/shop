@@ -1,21 +1,28 @@
 import { useState } from "react";
 import FilterableProductTable from "./components/FilterableProductTable";
-
-const database = [
-  { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
-  { category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit" },
-  { category: "Fruits", price: "$2", stocked: false, name: "Passionfruit" },
-  { category: "Vegetables", price: "$2", stocked: true, name: "Spinach" },
-  { category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin" },
-  { category: "Vegetables", price: "$1", stocked: true, name: "Peas" },
-];
+import AddItemForm from "./components/AddForm";
 
 const App = () => {
+  const dataFromLocalStorage =
+    JSON.parse(localStorage.getItem("database")) || [];
+
   const [checked, setChecked] = useState(false);
-
-  console.log(checked);
-
   const [search, setSearch] = useState("");
+  const [database, setDatabase] = useState(dataFromLocalStorage);
+
+  const deleteItem = (idToDelete) => {
+    setDatabase((prev) => {
+      const updated = prev.filter((item) => item.id !== idToDelete);
+
+      if (updated.length === 0) {
+        localStorage.removeItem("database");
+      } else {
+        localStorage.setItem("database", JSON.stringify(updated));
+      }
+
+      return updated;
+    });
+  };
 
   return (
     <div
@@ -23,15 +30,19 @@ const App = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        gap: "40px",
         height: "100vh",
       }}
     >
+      <AddItemForm setDatabase={setDatabase} />
+
       <FilterableProductTable
         data={database}
         checked={checked}
         setChecked={setChecked}
         search={search}
         setSearch={setSearch}
+        deleteItem={deleteItem}
       />
     </div>
   );
